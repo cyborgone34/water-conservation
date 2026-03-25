@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Watering Project</title>
+  <style>
+    :root {
+      --bg: #020617;
+      --panel: rgba(255,255,255,0.05);
+      --panel-strong: rgba(15,23,42,0.72);
+      --border: rgba(255,255,255,0.1);
+      --text: #ffffff;
+      --muted: #cbd5e1;
+      --muted-2: #94a3b8;
+      --emerald: #34d399;
+      --emerald-soft: rgba(52, 211, 153, 0.12);
+      --cyan: #67e8f9;
+      --blue: #60a5fa;
+      --shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+      --radius-xl: 2rem;
+      --radius-lg: 1.25rem;
+      --max: 1280px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .container {
+      width: min(var(--max), calc(100% - 48px));
+      margin: 0 auto;
+    }
+
+    .section {
+      padding: 5.5rem 0;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+      isolation: isolate;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(16,185,129,0.20), rgba(34,211,238,0.10), rgba(59,130,246,0.18));
+      z-index: -3;
+    }
+
+    .glow {
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(70px);
+      z-index: -2;
+      pointer-events: none;
+    }
+
+    .glow.one {
+      width: 320px;
+      height: 320px;
+      right: -40px;
+      top: -80px;
+      background: rgba(52, 211, 153, 0.18);
+    }
+
+    .glow.two {
+      width: 380px;
+      height: 380px;
+      left: -80px;
+      bottom: -120px;
+      background: rgba(103, 232, 249, 0.10);
+    }
+
+    .hero-grid,
+    .two-col,
+    .roadmap-grid,
+    .feature-grid,
+    .climate-grid {
+      display: grid;
+      gap: 2rem;
+    }
+
+    .hero-grid {
+      grid-template-columns: 1.08fr 0.92fr;
+      align-items: center;
+      min-height: 100vh;
+      padding: 5rem 0;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      background: rgba(52, 211, 153, 0.1);
+      color: #bbf7d0;
+      font-size: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    h1, h2, h3, p {
+      margin-top: 0;
+    }
+
+    h1 {
+      font-size: clamp(2.8rem, 6vw, 4.75rem);
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+      max-width: 13ch;
+      margin-bottom: 1.25rem;
+    }
+
+    h2 {
+      font-size: clamp(2rem, 4vw, 3.35rem);
+      line-height: 1.08;
+      letter-spacing: -0.025em;
+      margin-bottom: 1.1rem;
+    }
+
+    h3 {
+      font-size: 1.3rem;
+      line-height: 1.2;
+      margin-bottom: 0.7rem;
+    }
+
+    .lead {
+      max-width: 42rem;
+      font-size: 1.12rem;
+      line-height: 1.9;
+      color: var(--muted);
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 50px;
+      padding: 0.9rem 1.35rem;
+      border-radius: 1rem;
+      font-weight: 700;
+      font-size: 0.95rem;
+      transition: transform 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+    }
+
+    .button-primary {
+      background: var(--emerald);
+      color: #041018;
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.24);
+    }
+
+    .button-secondary {
+      border: 1px solid rgba(255,255,255,0.14);
+      background: rgba(255,255,255,0.02);
+      color: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+    }
+
+    .glass-card,
+    .card,
+    .soft-panel {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow);
+    }
+
+    .glass-card {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(20px);
+      padding: 1.5rem;
+    }
+
+    .feature-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card {
+      background: var(--panel-strong);
+      padding: 1.4rem;
+      border-radius: 1.35rem;
+    }
+
+    .card-icon {
+      font-size: 2rem;
+      margin-bottom: 0.7rem;
+    }
+
+    .mini-label,
+    .section-label,
+    .card-label {
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+
+    .card-label,
+    .mini-label {
+      color: var(--muted-2);
+      margin-bottom: 0.4rem;
+    }
+
+    .section-label {
+      color: #99f6e4;
+      margin-bottom: 0.85rem;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .muted-small {
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .subtle-section {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: rgba(255,255,255,0.03);
+    }
+
+    .two-col {
+      grid-template-columns: 1.1fr 0.9fr;
+      align-items: start;
+    }
+
+    .soft-panel {
+      background: rgba(255,255,255,0.05);
+      padding: 2rem;
+    }
+
+    .check-list,
+    .step-list {
+      display: grid;
+      gap: 1rem;
+      margin-top: 1.4rem;
+    }
+
+    .check-item,
+    .step-item {
+      display: flex;
+      gap: 0.95rem;
+      align-items: flex-start;
+      border: 1px solid var(--border);
+      background: rgba(15,23,42,0.6);
+      border-radius: 1.25rem;
+      padding: 1rem 1rem 1rem 1.1rem;
+    }
+
+    .check-mark {
+      flex: 0 0 auto;
+      margin-top: 0.1rem;
+      color: #d1fae5;
+      font-weight: 800;
+    }
+
+    .feature-cards {
+      margin-top: 3rem;
+      display: grid;
+      gap: 1.5rem;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .hover-card {
+      border: 1px solid var(--border);
+      background: var(--panel-strong);
+      border-radius: var(--radius-xl);
+      padding: 1.6rem;
+      box-shadow: var(--shadow);
+      transition: transform 0.18s ease;
+    }
+
+    .hover-card:hover {
+      transform: translateY(-4px);
+    }
+
+    .step-item {
+      background: rgba(255,255,255,0.05);
+      padding: 1.2rem;
+    }
+
+    .step-number {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 999px;
+      background: rgba(52,211,153,0.16);
+      color: #d1fae5;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.92rem;
+      flex: 0 0 auto;
+    }
+
+    .insight-panel {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      background: linear-gradient(135deg, rgba(15,23,42,0.96), rgba(30,41,59,0.94));
+      padding: 2rem;
+      box-shadow: var(--shadow);
+    }
+
+    .climate-grid {
+      margin-top: 2rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .climate-card {
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,0.05);
+      border-radius: 1.25rem;
+      padding: 1.25rem;
+    }
+
+    .roadmap-grid {
+      grid-template-columns: 1fr 1fr 1fr;
+      align-items: start;
+    }
+
+    .vision {
+      max-width: 960px;
+      margin: 0 auto;
+      text-align: center;
+      border: 1px solid rgba(52, 211, 153, 0.18);
+      border-radius: var(--radius-xl);
+      background: linear-gradient(135deg, rgba(52,211,153,0.10), rgba(103,232,249,0.05), rgba(96,165,250,0.08));
+      padding: 2.8rem;
+      box-shadow: var(--shadow);
+    }
+
+    @media (max-width: 1100px) {
+      .hero-grid,
+      .two-col,
+      .roadmap-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .hero-grid {
+        min-height: auto;
+        padding: 4rem 0 5rem;
+      }
+    }
+
+    @media (max-width: 760px) {
+      .container {
+        width: min(var(--max), calc(100% - 28px));
+      }
+
+      .section {
+        padding: 4rem 0;
+      }
+
+      .feature-grid,
+      .feature-cards,
+      .climate-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .glass-card,
+      .soft-panel,
+      .insight-panel,
+      .vision {
+        padding: 1.3rem;
+      }
+
+      h1 {
+        max-width: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="hero">
+    <div class="glow one"></div>
+    <div class="glow two"></div>
+    <div class="container hero-grid">
+      <div>
+        <div class="eyebrow">Water Conservation Project</div>
+        <h1>Keep your yard green without wasting water</h1>
+        <p class="lead">
+          Systems that rely just on timers often waste a lot and ignore what your yard actually needs. With cheap sensors and AI, we can make them smarter and more eco-friendly.
+        </p>
+        <div class="actions">
+          <a class="button button-primary" href="#solution">Explore the idea</a>
+          <a class="button button-secondary" href="#roadmap">See the roadmap</a>
+        </div>
+      </div>
+
+      <div class="glass-card">
+        <div class="feature-grid" id="heroFeatureGrid"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container two-col">
+      <div>
+        <div class="section-label">The Problem</div>
+        <h2>Most sprinkler systems still water by the clock, not environmental reality</h2>
+        <p class="lead">
+          Traditional sprinklers are usually controlled by fixed timers. They turn on at the same time each day, regardless of whether the soil is already moist or whether significant rain is expected tomorrow. 
+        </p>
+      </div>
+
+      <div class="soft-panel">
+        <div class="mini-label">Why this matters</div>
+        <div class="check-list" id="goalsList"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section subtle-section" id="solution">
+    <div class="container">
+      <div style="max-width: 52rem;">
+        <div class="section-label" style="color:#a5f3fc;">The Solution</div>
+        <h2>An intelligent irrigation system that responds to the environment</h2>
+        <p class="lead">
+          Instead of relying on a simple timer, the system runs on weather forecasts, data from moisture sensors and AI forecasts. Based on this, it computes a dynamic sprinkling schedule, customized for each watering zone, and operating in the best time of the day given your geographical region.
+        </p>
+      </div>
+
+      <div class="feature-cards" id="featureCards"></div>
+    </div>
+  </section>
+
+  <section class="section" id="how-it-works">
+    <div class="container two-col">
+      <div>
+        <div class="section-label">How It Works</div>
+        <h2>From forecast to sprinkler control</h2>
+        <div class="step-list" id="stepsList"></div>
+      </div>
+
+      <div class="insight-panel">
+        <div class="mini-label">Key Insight</div>
+        <h3 style="font-size: 2rem; margin-top: 0.4rem;">Different places need different watering logic</h3>
+        <p class="lead" style="font-size: 1rem; max-width: none; margin-bottom: 0;">
+          In Southern California, for example, the best time to water is often late at night or very early in the morning to reduce evaporation. In upstate New York, on the other hand, watering right after sunrise may be more effective. This project combines environmental awareness with local timing rules, making the system flexible across different climates.
+        </p>
+
+        <div class="climate-grid">
+          <div class="climate-card">
+            <div class="mini-label">SoCal</div>
+            <h3>Drought-first logic</h3>
+            <p class="muted-small">Prioritize low-evaporation watering windows and careful water budgeting.</p>
+          </div>
+          <div class="climate-card">
+            <div class="mini-label">Upstate New York</div>
+            <h3>Rain-aware logic</h3>
+            <p class="muted-small">Adapt to rapidly changing weather and avoid watering when rain is near.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section subtle-section" id="roadmap">
+    <div class="container roadmap-grid">
+      <div>
+        <div class="section-label" style="color:#a5f3fc;">Roadmap</div>
+        <h2 style="font-size: clamp(1.9rem, 3vw, 2.7rem);">What I need to learn next</h2>
+        <p class="lead">
+          I already feel prepared to build much of the software. The next challenge is learning the hardware side well enough to make the project real.
+        </p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">🌡️</div>
+        <h3>Sensor Integration</h3>
+        <p class="muted-small">Learn how to install soil moisture sensors, connect them to a controller, and read reliable data from each grid section.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-icon">💦</div>
+        <h3>Sprinkler Control</h3>
+        <p class="muted-small">Learn how to safely control power to valves and sprinklers so software decisions can translate into physical watering actions.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="vision">
+        <div class="section-label">Future Vision</div>
+        <h2>Start with a garden. Grow into a smarter system for small farms.</h2>
+        <p class="lead" style="margin-left:auto; margin-right:auto;">
+          This project begins with home irrigation, but the larger goal is to explore how intelligent, low-waste watering systems could support local agriculture. 
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    const heroFeatures = [
+      {
+        icon: '🌦️',
+        label: 'Input',
+        title: 'Forecast Data',
+        text: 'Rain predictions help prevent watering if a rainfall is expected soon.'
+      },
+      {
+        icon: '💧',
+        label: 'Input',
+        title: 'Moisture Sensors',
+        text: 'Each section of land is monitored so no area gets more water than needed.'
+      },
+      {
+        icon: '🧠',
+        label: 'AI Engine',
+        title: 'Adaptive Irrigation Control',
+        text: 'Software combines weather forecasts, soil data, and local timing rules to send the minimum necessary amount of water through the sprinklers.',
+        full: true
+      }
+    ];
+
+    const features = [
+      {
+        title: 'Weather-Aware Watering',
+        text: 'The system uses online weather data to estimate upcoming rainfall and reduce unnecessary watering before rain arrives.',
+        icon: '☁️'
+      },
+      {
+        title: 'Soil Moisture Grid',
+        text: 'A network of moisture sensors tracks conditions in each section of land so that every area gets only the water it actually needs.',
+        icon: '🌱'
+      },
+      {
+        title: 'Best-Time Scheduling',
+        text: 'Watering still happens at the right time of day for the local climate, helping reduce waste from evaporation and runoff.',
+        icon: '⏰'
+      }
+    ];
+
+    const steps = [
+      'Collect weather forecast data from the National Weather Service API.',
+      'Estimate likely rainfall over the next two weeks.',
+      'Read soil moisture values from sensors placed across a watering grid.',
+      'Calculate the minimum amount of water needed for each section.',
+      'Activate sprinklers only when and where watering is necessary.'
+    ];
+
+    const goals = [
+      'Save water by avoiding unnecessary watering before rainfall',
+      'Reduce energy use from inefficient sprinkler operation',
+      'Build a system that can grow from home gardens to small-scale agriculture'
+    ];
+
+    const heroFeatureGrid = document.getElementById('heroFeatureGrid');
+    const goalsList = document.getElementById('goalsList');
+    const featureCards = document.getElementById('featureCards');
+    const stepsList = document.getElementById('stepsList');
+
+    heroFeatures.forEach((item) => {
+      const div = document.createElement('div');
+      div.className = 'card';
+      if (item.full) div.style.gridColumn = '1 / -1';
+      div.innerHTML = `
+        <div class="card-icon">${item.icon}</div>
+        <div class="card-label">${item.label}</div>
+        <h3>${item.title}</h3>
+        <p class="muted-small">${item.text}</p>
+      `;
+      heroFeatureGrid.appendChild(div);
+    });
+
+    goals.forEach((goal) => {
+      const div = document.createElement('div');
+      div.className = 'check-item';
+      div.innerHTML = `
+        <div class="check-mark">✓</div>
+        <div>${goal}</div>
+      `;
+      goalsList.appendChild(div);
+    });
+
+    features.forEach((feature) => {
+      const div = document.createElement('div');
+      div.className = 'hover-card';
+      div.innerHTML = `
+        <div class="card-icon">${feature.icon}</div>
+        <h3>${feature.title}</h3>
+        <p class="muted-small">${feature.text}</p>
+      `;
+      featureCards.appendChild(div);
+    });
+
+    steps.forEach((step, index) => {
+      const div = document.createElement('div');
+      div.className = 'step-item';
+      div.innerHTML = `
+        <div class="step-number">${index + 1}</div>
+        <div>${step}</div>
+      `;
+      stepsList.appendChild(div);
+    });
+  </script>
+</body>
+</html>
